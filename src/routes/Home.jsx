@@ -5,7 +5,6 @@ import {supabase} from "../supabase.js";
 
 export default function Home(){
 
-  //let posts = [1,2,3,4,5,6,7,8, "daro"];
   const navigate = useNavigate();
 
   const [posts, setPosts] = useState({});
