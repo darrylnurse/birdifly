@@ -7,6 +7,7 @@ export default function Detail(){
 
   const { id } = useParams();
 
+  const [likes, setLikes] = useState(0);
   const [post, setPost] = useState({
     name: "",
     image_link: "",
@@ -24,24 +25,45 @@ export default function Detail(){
           .single();
       
       if(error) console.error();
-      else if(data) setPost({
-        name: data['name'],
-        image_link: data['image_link'],
-        text: data['text'],
-        likes: data['likes'],
-        comments: data['comments'],
-      })
+      else if(data) {
+        setPost({
+          name: data['name'],
+          image_link: data['image_link'],
+          text: data['text'],
+          comments: data['comments'],
+        })
+        setLikes(data['likes']);
+      }
     }
     fetchPost().catch(console.error);
   }, [id]);
+
+  const increaseLikes = () => {
+    setLikes(likes => likes + 1);
+  }
+
+  useEffect(() => {
+    const updateLikes = async () => {
+      await supabase
+          .from("Posts")
+          .update({likes: likes})
+          .eq('id', id);
+    }
+    updateLikes().catch(console.error);
+  }, [id, likes]);
 
   return (
       <div className={"h-full bg-yellow-50 p-10 flex justify-center items-center"}>
         <div className={"bg-yellow-200 h-full rounded-xl p-6 w-full lg:w-1/2"}>
 
-          <div className={"flex flex-row justify-between items-center h-[10%]"}>
+          <div className={"flex text-xl flex-row justify-between items-center h-[10%]"}>
             <div>{post.name}</div>
-            <div>{post.likes}</div>
+            <div
+                className={"hover:scale-[105%] select-none cursor-pointer"}
+                onClick={increaseLikes}
+            >
+              {likes} ♥
+            </div>
           </div>
 
           <div className={"h-[90%] flex flex-col gap-5"}>
@@ -49,7 +71,7 @@ export default function Detail(){
               <div className={"w-2/3 bg-yellow-300 rounded-xl overflow-hidden"}>
                 <img
                     alt={"bird image"}
-                    src={post.image_link}
+                    src={post.image_link || '/src/assets/bird.png'}
                     className={"w-full h-full object-cover"}
                 />
               </div>
@@ -64,11 +86,12 @@ export default function Detail(){
             <div className={"flex flex-row h-1/3 gap-5"}>
               <button className={"w-[10%] h-full bg-yellow-50 rounded-xl flex justify-center items-center text-xl"}> + </button>
               <div className={"w-[90%] flex flex-col gap-5 overflow-scroll no-scroll"}>
-                {post.comments && post.comments.map((comment, index) => {
+                {post.comments.length !== 0  ?
+                    post.comments.map((comment, index) => {
                   return (
                       <Comment key={index} text={comment}/>
                   )
-                })}
+                    }) : <div className={"select-none w-full h-full flex items-center justify-center text-xl italic bg-yellow-50 rounded-xl"}>No comments.</div>}
               </div>
             </div>
 

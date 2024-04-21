@@ -17,12 +17,12 @@ export default function NewPost(){
   }, [bird]);
 
   const submitPost = async event => {
+    event.preventDefault();
+
     if(bird.name.length === 0){
       alert("Please at least enter a name.");
       return;
     }
-
-    event.preventDefault();
 
     await supabase
         .from("Posts")
@@ -49,9 +49,11 @@ export default function NewPost(){
 
   return (
       <div className={"bg-yellow-50 h-full p-8 flex flex-col justify-start items-center"}>
+
         <div className={"text-3xl h-[20%] flex justify-center items-center"}>
           New Post
         </div>
+
         <form className={"w-[90%] lg:w-1/2 h-[80%] flex flex-col justify-evenly text-xl "}>
 
           <div>

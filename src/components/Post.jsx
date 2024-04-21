@@ -13,7 +13,7 @@ export default function Post({ id, name, likes, image, date }){
         <div className={"flex flex-row items-center gap-3"}>
           <div className={"bg-yellow-300"}>
             <img
-                src={image}
+                src={image || '/src/assets/bird.png'}
                 alt={"post image"}
                 className={"size-20 rounded-lg"}
             />
