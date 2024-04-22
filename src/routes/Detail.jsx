@@ -1,4 +1,4 @@
-import {useParams} from "react-router-dom";
+import {Outlet, useNavigate, useParams} from "react-router-dom";
 import Comment from "../components/Comment.jsx";
 import {useEffect, useState} from "react";
 import {supabase} from "../supabase.js";
@@ -6,6 +6,7 @@ import {supabase} from "../supabase.js";
 export default function Detail(){
 
   const { id } = useParams();
+  const navigate = useNavigate();
 
   const [likes, setLikes] = useState(0);
   const [post, setPost] = useState({
@@ -38,19 +39,15 @@ export default function Detail(){
     fetchPost().catch(console.error);
   }, [id]);
 
-  const increaseLikes = () => {
-    setLikes(likes => likes + 1);
-  }
+  const increaseLikes = async () => {
+    const newLikes = likes + 1;
+    setLikes(newLikes);
 
-  useEffect(() => {
-    const updateLikes = async () => {
-      await supabase
-          .from("Posts")
-          .update({likes: likes})
-          .eq('id', id);
-    }
-    updateLikes().catch(console.error);
-  }, [id, likes]);
+    await supabase
+        .from("Posts")
+        .update({ likes: newLikes })
+        .eq('id', id);
+  }
 
   return (
       <div className={"h-full bg-yellow-50 p-10 flex justify-center items-center"}>
@@ -59,41 +56,43 @@ export default function Detail(){
           <div className={"flex text-xl flex-row justify-between items-center h-[10%]"}>
             <div>{post.name}</div>
             <div
-                className={"hover:scale-[105%] select-none cursor-pointer"}
+                className={"hover:scale-[105%] active:scale-[98%] select-none cursor-pointer"}
                 onClick={increaseLikes}
             >
               {likes} ♥
             </div>
           </div>
 
-          <div className={"h-[90%] flex flex-col gap-5"}>
-            <div className={"flex flex-row gap-5 h-2/3"}>
+          <div className={"h-[90%] flex flex-col gap-3"}> {/*this gap can cause overflow*/}
+            <div className={"flex flex-row gap-3 h-2/3"}>
+
               <div className={"w-2/3 bg-yellow-300 rounded-xl overflow-hidden"}>
                 <img
                     alt={"bird image"}
-                    src={post.image_link || '/src/assets/bird.png'}
-                    className={"w-full h-full object-cover"}
+                    src={post.image_link || '/bird.png'}
+                    className={"w-full object-cover"}
+                    onError={({currentTarget}) => {
+                      currentTarget.onerror = null;
+                      currentTarget.src = '../public/bird.png';
+                    }}
                 />
               </div>
-              <div className={"w-1/3 flex gap-5 flex-col"}>
+
+              <div className={"w-1/3 flex gap-3 flex-col"}>
                 <div className={"h-1/6 bg-yellow-300 rounded-lg"}>
-                  <button className={"w-full h-full text-xl"}>Edit</button>
+                  <button
+                      className={"w-full h-full text-xl"}
+                      onClick={() =>  navigate(`/edit/${id}`)}
+                  >
+                    Edit
+                  </button>
                 </div>
                 <div className={"h-5/6 bg-yellow-50 p-5 rounded-lg"}>{post.text}</div>
               </div>
+
             </div>
 
-            <div className={"flex flex-row h-1/3 gap-5"}>
-              <button className={"w-[10%] h-full bg-yellow-50 rounded-xl flex justify-center items-center text-xl"}> + </button>
-              <div className={"w-[90%] flex flex-col gap-5 overflow-scroll no-scroll"}>
-                {post.comments.length !== 0  ?
-                    post.comments.map((comment, index) => {
-                  return (
-                      <Comment key={index} text={comment}/>
-                  )
-                    }) : <div className={"select-none w-full h-full flex items-center justify-center text-xl italic bg-yellow-50 rounded-xl"}>No comments.</div>}
-              </div>
-            </div>
+            <Outlet />
 
           </div>
 

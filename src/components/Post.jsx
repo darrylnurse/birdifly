@@ -11,11 +11,15 @@ export default function Post({ id, name, likes, image, date }){
   return (
       <div onClick={handleClick} className={"cursor-pointer select-none bg-yellow-200 p-8 rounded-xl flex flex-row justify-between items-center px-5"}>
         <div className={"flex flex-row items-center gap-3"}>
-          <div className={"bg-yellow-300"}>
+          <div>
             <img
-                src={image || '/src/assets/bird.png'}
+                src={image || '/bird.png'}
                 alt={"post image"}
                 className={"size-20 rounded-lg"}
+                onError={({currentTarget}) => {
+                  currentTarget.onerror = null;
+                  currentTarget.src = '/bird.png';
+                }}
             />
           </div>
           <div className={"text-xl"}>{name}</div>

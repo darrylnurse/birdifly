@@ -6,6 +6,9 @@ import Root from "./routes/Root.jsx";
 import Home from "./routes/Home.jsx";
 import Detail from "./routes/Detail.jsx";
 import NewPost from "./routes/NewPost.jsx";
+import Edit from "./routes/Edit.jsx";
+import Comments from "./routes/Comments.jsx";
+import NewComment from "./routes/NewComment.jsx";
 
 const router = createBrowserRouter([
   {
@@ -17,12 +20,26 @@ const router = createBrowserRouter([
         element: <Home />,
       },
       {
-        path: '/details/:id',
+        path: 'details/:id',
         element: <Detail />,
+        children: [
+          {
+            index: true,
+            element: <Comments/>
+          },
+          {
+            path: 'new-comment',
+            element: <NewComment/>
+          }
+        ]
       },
       {
-        path: '/new',
+        path: 'new',
         element: <NewPost />,
+      },
+      {
+        path: 'edit/:id',
+        element: <Edit />,
       },
     ]
   }

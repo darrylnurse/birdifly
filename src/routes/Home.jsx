@@ -8,7 +8,7 @@ export default function Home(){
   const navigate = useNavigate();
 
   const [posts, setPosts] = useState({});
-  const [sort, setSort] = useState(true);
+  const [sort, setSort] = useState(false);
 
   useEffect(() => {
     const fetchPosts = async () => {
