@@ -73,7 +73,7 @@ export default function Detail(){
                     className={"w-full object-cover"}
                     onError={({currentTarget}) => {
                       currentTarget.onerror = null;
-                      currentTarget.src = '../public/bird.png';
+                      currentTarget.src = '/bird.png';
                     }}
                 />
               </div>

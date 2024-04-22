@@ -3,7 +3,6 @@ import {Suspense, lazy, useEffect, useState} from "react";
 import {supabase} from "../supabase.js";
 const Post = lazy(() => import("../components/Post.jsx"));
 
-
 export default function Home(){
 
   const navigate = useNavigate();
@@ -101,6 +100,7 @@ export default function Home(){
                          likes={post.likes}
                          image={post.image_link}
                          date={post.created_at}
+                         num_comments={post.comments.length}
                    />
                )
             })}
