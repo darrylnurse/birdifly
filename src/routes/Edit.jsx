@@ -62,6 +62,10 @@ export default function Edit(){
   const deletePost = async event => {
     event.preventDefault();
 
+    if(!confirm("Are you sure you want to delete this wonderful bird?")){
+      return;
+    }
+
     await supabase
         .from("Posts")
         .delete()
